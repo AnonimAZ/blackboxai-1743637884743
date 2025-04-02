@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results | Mindfulness Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .level-normal { background-color: #d1fae5; color: #065f46; }
+        .level-mild { background-color: #fef3c7; color: #92400e; }
+        .level-moderate { background-color: #fee2e2; color: #991b1b; }
+        .level-severe { background-color: #ffedd5; color: #9a3412; }
+        .sholawat-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="dashboard.html" class="font-bold text-xl flex items-center">
+                <i class="fas fa-praying-hands mr-2"></i>Mindfulness Platform
+            </a>
+            <div class="space-x-4">
+                <a href="dashboard.html" class="hover:underline"><i class="fas fa-home mr-1"></i>Dashboard</a>
+                <a href="sholawat-list.html" class="hover:underline"><i class="fas fa-music mr-1"></i>Sholawat</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h1 class="text-2xl font-bold text-blue-600 mb-2">
+                <i class="fas fa-chart-line mr-2"></i>Your Anxiety Test Results
+            </h1>
+            
+            <!-- Score Display -->
+            <div class="flex flex-col md:flex-row gap-6 mb-8">
+                <div class="w-full md:w-1/3 bg-white p-6 rounded-lg border border-gray-200 text-center">
+                    <div class="text-5xl font-bold mb-2" id="score-display">-</div>
+                    <div class="text-gray-600">SAS Score</div>
+                    <div class="mt-4 text-sm" id="score-range">(20-80 range)</div>
+                </div>
+                
+                <div class="w-full md:w-2/3">
+                    <div class="p-4 rounded-lg mb-4" id="level-display">
+                        <h3 class="font-semibold text-lg mb-2">Anxiety Level</h3>
+                        <p id="level-text">-</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Interpretation</h3>
+                        <p id="interpretation-text">Complete the anxiety test to see your results</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommended Sholawat -->
+            <div>
+                <h2 class="text-xl font-semibold mb-4 text-blue-600">
+                    <i class="fas fa-star mr-2"></i>Recommended Sholawat Therapy
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="recommendations-container">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4 text-blue-600">
+                <i class="fas fa-lightbulb mr-2"></i>Additional Recommendations
+            </h2>
+            <div class="space-y-4" id="additional-recommendations">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            
+            <div class="mt-6">
+                <a href="dashboard.html" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                    <i class="fas fa-home mr-2"></i>Return to Dashboard
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!localStorage.getItem('currentUser')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Get score from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const score = parseInt(urlParams.get('score'));
+            
+            if (isNaN(score)) {
+                window.location.href = 'anxiety-test.html';
+                return;
+            }
+
+            // Display score
+            document.getElementById('score-display').textContent = score;
+            
+            // Determine anxiety level
+            let level, levelClass, recommendations;
+            if (score <= 40) {
+                level = 'Normal';
+                levelClass = 'level-normal';
+                recommendations = [
+                    {
+                        title: 'Sholawat Nariyah',
+                        description: 'For general peace and tranquility',
+                        audio: 'https://example.com/sholawat/nariyah.mp3'
+                    },
+                    {
+                        title: 'Sholawat Badar',
+                        description: 'For spiritual strength and protection',
+                        audio: 'https://example.com/sholawat/badar.mp3'
+                    }
+                ];
+            } else if (score <= 50) {
+                level = 'Mild';
+                levelClass = 'level-mild';
+                recommendations = [
+                    {
+                        title: 'Sholawat Tibbil Qulub',
+                        description: 'For calming the heart and mind',
+                        audio: 'https://example.com/sholawat/tibbil-qulub.mp3'
+                    },
+                    {
+                        title: 'Sholawat Munjiyat',
+                        description: 'For relief from worries',
+                        audio: 'https://example.com/sholawat/munjiyat.mp3'
+                    }
+                ];
+            } else if (score <= 60) {
+                level = 'Moderate';
+                levelClass = 'level-moderate';
+                recommendations = [
+                    {
+                        title: 'Sholawat Syifa',
+                        description: 'For healing and emotional balance',
+                        audio: 'https://example.com/sholawat/syifa.mp3'
+                    },
+                    {
+                        title: 'Sholawat Fatih',
+                        description: 'For opening the heart to peace',
+                        audio: 'https://example.com/sholawat/fatih.mp3'
+                    }
+                ];
+            } else {
+                level = 'Severe';
+                levelClass = 'level-severe';
+                recommendations = [
+                    {
+                        title: 'Sholawat Jibril',
+                        description: 'For intense spiritual support',
+                        audio: 'https://example.com/sholawat/jibril.mp3'
+                    },
+                    {
+                        title: 'Sholawat Tafrijiyah',
+                        description: 'For relief from distress',
+                        audio: 'https://example.com/sholawat/tafrijiyah.mp3'
+                    }
+                ];
+            }
+
+            // Display level
+            const levelDisplay = document.getElementById('level-display');
+            levelDisplay.classList.add(levelClass);
+            document.getElementById('level-text').textContent = level;
+
+            // Set interpretation
+            const interpretations = {
+                'Normal': 'Your anxiety level is within the normal range. Maintain your spiritual practices for continued well-being.',
+                'Mild': 'You may be experiencing mild anxiety. Regular sholawat therapy can help maintain emotional balance.',
+                'Moderate': 'You appear to have moderate anxiety. Consistent spiritual practice is recommended.',
+                'Severe': 'Your anxiety level is severe. Please consider professional help alongside spiritual therapy.'
+            };
+            document.getElementById('interpretation-text').textContent = interpretations[level];
+
+            // Display recommendations
+            const container = document.getElementById('recommendations-container');
+            recommendations.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-gray-200 rounded-lg p-4 sholawat-card transition duration-300';
+                card.innerHTML = `
+                    <h3 class="font-semibold text-lg mb-2">${item.title}</h3>
+                    <p class="text-gray-600 mb-4">${item.description}</p>
+                    <audio controls class="w-full">
+                        <source src="${item.audio}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
+                container.appendChild(card);
+            });
+
+            // Additional recommendations
+            const additionalRecs = document.getElementById('additional-recommendations');
+            const generalTips = [
+                'Practice deep breathing exercises daily',
+                'Establish a regular sleep schedule',
+                'Limit caffeine and sugar intake',
+                'Engage in light physical activity',
+                'Perform dhikr (remembrance of Allah) morning and evening'
+            ];
+            
+            generalTips.forEach(tip => {
+                const tipElement = document.createElement('div');
+                tipElement.className = 'flex items-start';
+                tipElement.innerHTML = `
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                    <span>${tip}</span>
+                `;
+                additionalRecs.appendChild(tipElement);
+            });
+
+            if (level === 'Severe') {
+                const emergencySection = document.createElement('div');
+                emergencySection.className = 'bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-6';
+                emergencySection.innerHTML = `
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-2xl mr-3 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-lg text-red-700 mb-2">Emergency Psychological Help</h3>
+                            <p class="mb-3">For immediate professional support, contact:</p>
+                            <div class="bg-white p-3 rounded-lg shadow-inner">
+                                <h4 class="font-semibold text-blue-600">YPPI (Yayasan Praktek Psikolog Indonesia)</h4>
+                                <p class="mt-1"><i class="fab fa-whatsapp mr-2 text-green-500"></i>WhatsApp: +62 878-8718-4585</p>
+                                <p class="mt-1"><i class="fas fa-globe mr-2"></i>Website: www.praktekpsikolog.com</p>
+                                <p class="mt-1"><i class="fas fa-map-marker-alt mr-2"></i>24/7 Crisis Center available</p>
+                            </div>
+                            <p class="mt-3 text-sm">Professional psychologists are available to help you through difficult times.</p>
+                        </div>
+                    </div>
+                `;
+                additionalRecs.insertBefore(emergencySection, additionalRecs.firstChild);
+                
+                const emergencyTip = document.createElement('div');
+                emergencyTip.className = 'flex items-start bg-red-50 p-3 rounded-lg';
+                emergencyTip.innerHTML = `
+                    <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>
+                    <span>Consider consulting with a mental health professional for additional support.</span>
+                `;
+                additionalRecs.appendChild(emergencyTip);
+            }
+        });
+    </script>
+</body>
+</html>
